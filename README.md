@@ -1,5 +1,5 @@
 # vxp-server
-Processing server for [VXP](https://github.com/tetra-fox/VRCMods/tree/master/VXP), a VRChat mod that sets your facial expressions based on the tone in your voice.
+Processing server for [VXP](https://github.com/tetra-fox/VRCMods/tree/master/VXP), a VRChat mod that sets your facial expressions based on the tone in your voice. Though technically, this is just a generic websocket server so use it as you please.
 
 # Requirements
 - [`python >= 3.8`](https://www.python.org/downloads/)

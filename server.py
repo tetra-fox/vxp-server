@@ -1,22 +1,18 @@
-import asyncio
-from logger import Logger
-import websockets
-# import tensor_processor as tp
-import requests
-import semver
-from config import *
-import sys
 import os
+import sys
+import asyncio
+import websockets
 from colorama import Fore, Back, Style
-from logger import Logger
 import updater
-import enum
+from logger import Logger
+from config import *
 
-LoggerInstance = Logger("server", Fore.GREEN)
+logger = Logger("server", Fore.GREEN)
+websocketServer = None
 
 async def on_connect(websocket):
     await websocket.send("ayo")
-    LoggerInstance.log("Client connected.")
+    logger.log(f"Client connected. Remote address: {websocket.remote_address[0]}")
 
 async def emit_expression(websocket):
     name = await websocket.recv()
@@ -27,19 +23,25 @@ async def emit_expression(websocket):
     await websocket.send(greeting)
     print(f"> {greeting}")
 
-def main():
+async def echo(websocket):
+    async for message in websocket:
+        logger.log(f"Received: {message}")
+        await websocket.send("alive")
+        logger.log(f"Sent: alive")
+
+async def main():
     print(f"{Fore.CYAN}{Style.BRIGHT}vxp-server v{internals['Version']}", Fore.CYAN)
     print("=" * 20 + Style.RESET_ALL)
     if (not parser.getboolean("Config", "DisableUpdateCheck")): updater.check()
 
+    clients = set()
+
     # tp.init()
     
-    start_server = websockets.serve(on_connect, "localhost", config['Port'])
-
-    asyncio.get_event_loop().run_until_complete(start_server)
-    LoggerInstance.ok(f"vxp-server is now reachable at ws://localhost:{config['Port']}")
-    
-    asyncio.get_event_loop().run_forever()
+    async with websockets.serve(echo, "localhost", config["port"]) as ws:
+        websocketServer = ws
+        logger.ok(f"vxp-server is now reachable at ws://localhost:{config['port']}")
+        await asyncio.Future()
 
 def cleanup():
     # close any hanging threads and connections
@@ -47,11 +49,13 @@ def cleanup():
 
 if __name__ == "__main__":
     try:
-        main()
+        asyncio.run(main())
     except KeyboardInterrupt:
-        LoggerInstance.warn("KeyboardInterrupt, shutting down gracefully...")
+        logger.warn("KeyboardInterrupt, shutting down gracefully...")
         cleanup()
         try:
+            websocketServer.close()
+            logger.ok("Server closed.")
             sys.exit(0)
         except SystemExit:
             os._exit(0)
