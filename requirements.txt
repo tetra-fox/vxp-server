@@ -1,0 +1,7 @@
+websockets >= 9.0.1
+pyaudio >= 0.2.11
+tensorflow >= 2.8.0rc1
+numpy >= 1.22.1
+semver >= 2.13.0
+colorama >= 0.4.4
+pyinstaller >= 3.6
