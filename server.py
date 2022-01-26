@@ -4,6 +4,7 @@ import asyncio
 import websockets
 from colorama import Fore, Back, Style
 import updater
+import processor
 from logger import Logger
 from config import *
 
@@ -36,7 +37,9 @@ async def main():
 
     clients = set()
 
-    # tp.init()
+    processor.init()
+
+    logger.log("Initializing...")
     
     async with websockets.serve(echo, "localhost", config["port"]) as ws:
         websocketServer = ws
