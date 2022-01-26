@@ -15,6 +15,6 @@ Processing server for [VXP](https://github.com/tetra-fox/VRCMods/tree/master/VXP
 4. Install dependencies with `pip install -r requirements.txt`
 5. Run `start.bat`
 
-## Credit
+<!-- ## Credit
 - `model.tflite` was created with the assistance of tjhorner
-- `mlp_classifer.model` was created by x4nth055 and can be found [here](https://github.com/x4nth055/pythoncode-tutorials/tree/master/machine-learning/speech-emotion-recognition/result)
+- `mlp_classifer.model` was created by x4nth055 and can be found [here](https://github.com/x4nth055/pythoncode-tutorials/tree/master/machine-learning/speech-emotion-recognition/result) -->
