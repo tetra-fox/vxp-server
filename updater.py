@@ -10,7 +10,7 @@ from logger import Logger
 logger = Logger("updater", Fore.CYAN)
 
 def check():
-    response = requests.get(f"https://api.github.com/repos/{internals['Repo']}/releases/latest")
+    response = requests.get(f"https://api.github.com/repos/{internals['repo']}/releases/latest")
     json = response.json()
 
     if (response.status_code != 200):
@@ -18,7 +18,7 @@ def check():
         return
 
     remote_version = json["tag_name"] # usually my tag names are pure semvers
-    diff = semver.compare(remote_version, internals['Version'])
+    diff = semver.compare(remote_version, internals['version']) # 1 if remote is newer, -1 if local is newer, 0 if equal
 
     if (diff == 1):
         logger.warn(f"Checking for GitHub for updates...")
@@ -27,7 +27,7 @@ def check():
             download_zip(json)
         else:
             logger.warn("Auto-updates are disabled. Update for the latest features and bug fixes.")
-            logger.warn(f"Download: https://github.com/{internals['Repo']}/releases/latest")
+            logger.warn(f"Download: https://github.com/{internals['repo']}/releases/latest")
     else:
         logger.log("You are running the latest version of vxp-server.")
 
@@ -45,6 +45,7 @@ def download_zip(json):
 
         logger.log("Installing...")
 
+        # TODO: extract contents of contained folder to current directory
         with zipfile.ZipFile("vxp-server.zip", "r") as zip:
             for file in zip.namelist():
                 zip_prefix = internals["repo"].replace("/", "-")

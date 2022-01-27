@@ -1,25 +1,25 @@
 import tensorflow as tf
+from tensorflow import keras
 import sounddevice as sd
 from logger import Logger
 from colorama import Fore, Back, Style
 import numpy as np
 import asyncio
+from config import *
+import tensorflow_hub as hub
 
 logger = Logger("processor", Fore.MAGENTA)
 
 interpreter = None
 
 async def init():
+    
     logger.warn("Loading model...")
-
     global interpreter
-
-    interpreter = tf.lite.Interpreter(model_path="models/trill.tflite")
-
+    interpreter = tf.lite.Interpreter(model_path=internals['modelpath'])
     logger.ok("Model loaded.")
     
     logger.warn("Initializing audio...")
-    # get default input device
     default_input_device = sd.query_devices(kind="input")
     logger.log(f"Using default input device: {default_input_device['name']}")
     
@@ -39,9 +39,15 @@ async def record_buffer():
         interpreter.set_tensor(input_details[0]["index"], data)
         interpreter.invoke()
 
+        module = hub.KerasLayer('https://tfhub.dev/google/nonsemantic-speech-benchmark/trill-distilled/3')
+        module.predict(data)
+
+
         # Get TFLite output.
         output_data = interpreter.get_tensor(interpreter.get_output_details()[0]["index"])
-        logger.log(output_data)
+        bruh = model.predict(output_data)
+        print(bruh)
+        # logger.log(output_data)
 
 
     stream = sd.InputStream(samplerate=16000, channels=1, callback=callback, blocksize=32000)

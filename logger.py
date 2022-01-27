@@ -1,4 +1,4 @@
-from colorama import Fore, Back, Style
+from colorama import Fore, Style
 
 class Logger:
     def __init__(self, name: str = "Logger", color: Fore = Fore.GREEN):

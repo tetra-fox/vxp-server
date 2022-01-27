@@ -31,7 +31,7 @@ async def echo(websocket):
         logger.log(f"Sent: alive")
 
 async def main():
-    print(f"{Fore.CYAN}{Style.BRIGHT}vxp-server v{internals['Version']}", Fore.CYAN)
+    print(f"{Fore.CYAN}{Style.BRIGHT}vxp-server v{internals['version']}", Fore.CYAN)
     print("=" * 20 + Style.RESET_ALL)
     if (not parser.getboolean("Config", "DisableUpdateCheck")): updater.check()
 
