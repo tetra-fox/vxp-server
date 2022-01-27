@@ -37,7 +37,7 @@ async def main():
 
     clients = set()
 
-    processor.init()
+    await processor.init()
 
     logger.log("Initializing...")
     
