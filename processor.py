@@ -23,9 +23,7 @@ async def init():
     default_input_device = sd.query_devices(kind="input")
     logger.log(f"Using default input device: {default_input_device['name']}")
     
-    # stream microphone input to model
-    # asyncio.create_task(sd.InputStream(samplerate=16000, channels=1, callback=callback, blocksize=32000))
-        # wait for input
+    # begin listening & interpreting
     await record_buffer()
 
 async def record_buffer():
@@ -36,15 +34,14 @@ async def record_buffer():
 
         # Run inference with TFLite model.
         input_details = interpreter.get_input_details()
-        output_details = interpreter.get_output_details()
         interpreter.resize_tensor_input(input_details[0]["index"], data.shape)
         interpreter.allocate_tensors()
         interpreter.set_tensor(input_details[0]["index"], data)
         interpreter.invoke()
 
         # Get TFLite output.
-        output_data = interpreter.get_tensor(output_details[0]["index"])
-        print(output_data)
+        output_data = interpreter.get_tensor(interpreter.get_output_details()[0]["index"])
+        logger.log(output_data)
 
 
     stream = sd.InputStream(samplerate=16000, channels=1, callback=callback, blocksize=32000)
