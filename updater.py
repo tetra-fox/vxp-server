@@ -6,6 +6,7 @@ import zipfile
 from colorama import Fore
 from config import *
 from logger import Logger
+import logging
 
 logger = Logger("updater", Fore.CYAN)
 
@@ -47,12 +48,13 @@ def download_zip(json):
 
         # TODO: extract contents of contained folder to current directory
         with zipfile.ZipFile("vxp-server.zip", "r") as zip:
-            for file in zip.namelist():
-                zip_prefix = internals["repo"].replace("/", "-")
-                if file.startswith(zip_prefix):
-                    zip.extract(file, "./")
+            for item in (f for f in zip.filelist if internals["repo"].replace("/","-") in f.filename):
+                zip.extract(item, ".")
+
 
         os.remove("vxp-server.zip")
+
+        return
 
         internals["Version"] = json["tag_name"]
         with open("config.ini", "w") as config_file:

@@ -1,6 +1,8 @@
-tensorflow >= 2.8.0rc1
-websockets >= 10.1
-sounddevice >= 0.4.4
-semver >= 2.13.0
-colorama >= 0.4.4
-pyinstaller >= 3.6
+colorama == 0.4.4
+tensorflow == 2.8.0rc1
+tensorflow_hub == 0.12.0
+scipy == 1.7.3
+semver == 2.13.0
+sounddevice == 0.4.4
+websockets == 10.1
+pipwin == 0.5.1; platform_system == "Windows"

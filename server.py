@@ -4,7 +4,8 @@ import asyncio
 import websockets
 from colorama import Fore, Back, Style
 import updater
-import processor
+import audio_processor
+import threading
 from logger import Logger
 from config import *
 
@@ -36,19 +37,22 @@ async def main():
     if (not parser.getboolean("Config", "DisableUpdateCheck")): updater.check()
 
     clients = set()
-
-    await processor.init()
-
-    logger.log("Initializing...")
     
+    th = threading.Thread(target=asyncio.run, args=(audio_processor.init(),))
+    th.start()
+
+    global websocketServer
+
     async with websockets.serve(echo, "localhost", config["port"]) as ws:
         websocketServer = ws
         logger.ok(f"vxp-server is now reachable at ws://localhost:{config['port']}")
         await asyncio.Future()
+    
 
 def cleanup():
     # close any hanging threads and connections
-    print("bye")
+    websocketServer.close()
+    os.remove("./cache")
 
 if __name__ == "__main__":
     try:
@@ -57,7 +61,7 @@ if __name__ == "__main__":
         logger.warn("KeyboardInterrupt, shutting down gracefully...")
         cleanup()
         try:
-            websocketServer.close()
+            cleanup()
             logger.ok("Server closed.")
             sys.exit(0)
         except SystemExit:
